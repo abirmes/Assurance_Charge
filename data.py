@@ -2,6 +2,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.impute import SimpleImputer
 
 df = pd.read_csv('assurance_maladie.csv')
 df.shape # Returns (number_of_rows, number_of_columns)
@@ -20,10 +21,29 @@ list = df.values.tolist()
 
 
 sns.scatterplot(data=df, x="bmi", y="charges") #Scatter Plot: To show the relationship between two numerical variables.
-plt.show()
+#plt.show()
 #Bar Plot: To display the average of a numerical variable across different categories.
 sns.barplot(data=df, x="sex", y="bmi")
-plt.show()
+#plt.show()
 #Distribution Plot (Displot): To visualize the distribution of a single numerical variable.
 sns.displot(data=df, x="bmi", kind="kde") # 'kind' can be 'hist', 'kde', 'ecdf'
-plt.show()
+#plt.show()
+
+
+selected_columns_nums = ['age' , 'bmi' , 'children' , 'charges']
+
+imputer_mean = SimpleImputer(strategy='mean')
+df[selected_columns_nums] = imputer_mean.fit_transform(df[selected_columns_nums])
+print(df)
+
+selected_columns_string = ['sex' , 'smoker' , 'region']
+
+mode_category = df[selected_columns_string[0]].mode()[0]
+
+# Fill missing values with the calculated mode
+df[selected_columns_string].fillna(mode_category, inplace=True)
+
+print("\nDataFrame after mode imputation:")
+print(df)
+
+
